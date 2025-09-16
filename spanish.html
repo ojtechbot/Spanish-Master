@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spanish Master - Learn Spanish</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap & Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Translate API -->
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #facc15;
+      --dark: #101820;
+      --light: #f8fafc;
+      --gray: #9ca3af;
+    }
+    
+    body {
+      background: linear-gradient(145deg, #101820, #1c1f26);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+    
+    .page {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    .nav-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    .nav-icon {
+      font-size: 1.4rem;
+      color: var(--gray);
+      transition: all 0.3s ease;
+      padding: 8px;
+      border-radius: 12px;
+    }
+    
+    .nav-label {
+      font-size: 0.7rem;
+      margin-top: 4px;
+      color: var(--gray);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-item:hover .nav-icon,
+    .nav-item.active .nav-icon {
+      color: var(--secondary);
+      background: rgba(250, 204, 21, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .nav-item:hover .nav-label,
+    .nav-item.active .nav-label {
+      color: white;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+      color: white;
+    }
+    
+    .btn-sound {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .btn-sound:hover {
+      background: var(--secondary);
+      transform: scale(1.1);
+    }
+    
+    .btn-sound.listening {
+      background: #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .section-title {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 50%;
+      height: 3px;
+      background: var(--secondary);
+      border-radius: 3px;
+    }
+    
+    .speech-feedback {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    
+    .speech-level {
+      height: 100%;
+      width: 0%;
+      background: var(--secondary);
+      transition: width 0.1s ease;
+    }
+    
+    .accuracy-ring {
+      transform: rotate(-90deg);
+    }
+    
+    .accuracy-ring-circle {
+      transition: stroke-dashoffset 0.5s;
+    }
+    
+    .word-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .word-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .success-checkmark {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+      transform: rotate(45deg);
+    }
+    
+    .check-icon {
+      box-sizing: content-box;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    
+    .check-icon-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: var(--secondary);
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    
+    .check-icon-check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+    
+    @keyframes stroke {
+      100% { stroke-dashoffset: 0; }
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .auth-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+    
+    .auth-tab.active {
+      opacity: 1;
+      border-bottom: 2px solid var(--secondary);
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+    }
+    
+    .form-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      border-radius: 12px;
+      padding: 12px 15px;
+    }
+    
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+      color: white;
+    }
+    
+    .lesson-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .lesson-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-value {
+      height: 100%;
+      background: var(--secondary);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    .stats-card {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--secondary);
+      margin-bottom: 5px;
+    }
+    
+    .stats-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2.5rem;
+    }
+    
+    .translate-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .translate-result {
+      min-height: 100px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Auth Page -->
+  <div id="auth-page" class="page active">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-md mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold text-yellow-400 mb-2">Spanish Master</h1>
+          <p class="text-gray-400">Start your journey to fluency today</p>
+        </div>
+        
+        <div class="card p-6">
+          <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+          </div>
+          
+          <form id="login-form" class="auth-form active">
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Email</label>
+              <input type="email" class="form-control" placeholder="Your email">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Password</label>
+              <input type="password" class="form-control" placeholder="Your password">
+            </div>
+            
+            <div class="mb-4">
+              <button type="button" class="btn-primary w-full" onclick="login()">Login</button>
+            </div>
+            
+            <div class="text-center">
+              <a href="#" class="text-yellow-400 text-sm">Forgot password?</a>
+            </div>
+          </form>
+          
+          <form id="signup-form" class="auth-form">
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Full Name</label>
+              <input type="text" class="form-control" placeholder="Your name">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Email</label>
+              <input type="email" class="form-control" placeholder="Your email">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Password</label>
+              <input type="password" class="form-control" placeholder="Create a password">
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label text-gray-400">Confirm Password</label>
+              <input type="password" class="form-control" placeholder="Confirm your password">
+            </div>
+            
+            <div class="mb-4">
+              <button type="button" class="btn-primary w-full" onclick="signup()">Create Account</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="text-center mt-6">
+          <p class="text-gray-400">By continuing, you agree to our <a href="#" class="text-yellow-400">Terms of Service</a> and <a href="#" class="text-yellow-400">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Page -->
+  <div id="home-page" class="page">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-3xl font-bold">Hola, <span id="user-name">User</span>!</h1>
+          <p class="text-gray-400">Ready to continue your Spanish journey?</p>
+        </div>
+        <div class="relative">
+          <div class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center">
+            <span class="text-white text-2xl" id="user-initial">U</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card p-5 mb-8">
+        <h2 class="text-xl font-semibold mb-4">Your Progress</h2>
+        <div class="progress-bar mb-2">
+          <div class="progress-value" style="width: 35%;"></div>
+        </div>
+        <div class="flex justify-between text-sm text-gray-400">
+          <span>Level: Beginner</span>
+          <span>35% Complete</span>
+        </div>
+      </div>
+      
+      <h2 class="section-title text-2xl font-bold mb-6">Continue Learning</h2>
+      <div class="grid grid-cols-1 gap-4 mb-8">
+        <div class="lesson-card card p-5 flex items-center">
+          <div class="bg-blue-500 p-3 rounded-full mr-4">
+            <i class="fas fa-book text-white"></i>
+          </div>
+          <div class="flex-grow">
+            <h3 class="font-semibold">Basic Greetings</h3>
+            <p class="text-gray-400 text-sm">Learn how to say hello and introduce yourself</p>
+          </div>
+          <div class="text-yellow-400">
+            <i class="fas fa-play-circle text-2xl"></i>
+          </div>
+        </div>
+        
+        <div class="lesson-card card p-5 flex items-center">
+          <div class="bg-green-500 p-3 rounded-full mr-4">
+            <i class="fas fa-utensils text-white"></i>
+          </div>
+          <div class="flex-grow">
+            <h3 class="font-semibold">Food & Dining</h3>
+            <p class="text-gray-400 text-sm">Order food like a native speaker</p>
+          </div>
+          <div class="text-yellow-400">
+            <i class="fas fa-play-circle text-2xl"></i>
+          </div>
+        </div>
+        
+        <div class="lesson-card card p-5 flex items-center">
+          <div class="bg-red-500 p-3 rounded-full mr-4">
+            <i class="fas fa-directions text-white"></i>
+          </div>
+          <div class="flex-grow">
+            <h3 class="font-semibold">Asking for Directions</h3>
+            <p class="text-gray-400 text-sm">Never get lost in a Spanish-speaking country</p>
+          </div>
+          <div class="text-yellow-400">
+            <i class="fas fa-play-circle text-2xl"></i>
+          </div>
+        </div>
+      </div>
+      
+      <h2 class="section-title text-2xl font-bold mb-6">Daily Challenge</h2>
+      <div class="card p-5 mb-8 text-center">
+        <div class="bg-yellow-400 p-4 rounded-full inline-flex items-center justify-center mb-4">
+          <i class="fas fa-trophy text-dark text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">5 New Words</h3>
+        <p class="text-gray-400 mb-4">Learn these words to earn bonus points!</p>
+        <button class="btn-primary" onclick="navigateTo('lessons')">Start Challenge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lessons Page -->
+  <div id="lessons-page" class="page">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <button class="btn-sound mr-3" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-3xl font-bold inline-block">Lecciones <span class="text-yellow-400">📚</span></h1>
+        </div>
+        <div class="relative">
+          <svg class="w-16 h-16" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="#1f2937" stroke-width="2"/>
+            <g class="accuracy-ring">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="#facc15" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="25" class="accuracy-ring-circle"/>
+            </g>
+            <text x="18" y="21" text-anchor="middle" fill="white" font-size="8">75%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 gap-5 mb-8">
+        <div class="card p-5">
+          <div class="flex items-center mb-4">
+            <div class="bg-blue-500 p-3 rounded-full mr-4">
+              <i class="fas fa-1 text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold">Basic Greetings</h3>
+              <p class="text-gray-400 text-sm">5 lessons • 20 minutes</p>
+            </div>
+          </div>
+          <div class="progress-bar mb-2">
+            <div class="progress-value" style="width: 80%;"></div>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">4/5 completed</span>
+            <button class="text-yellow-400 text-sm font-semibold" onclick="startLesson(1)">Continue</button>
+          </div>
+        </div>
+        
+        <div class="card p-5">
+          <div class="flex items-center mb-4">
+            <div class="bg-green-500 p-3 rounded-full mr-4">
+              <i class="fas fa-2 text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold">Numbers & Counting</h3>
+              <p class="text-gray-400 text-sm">4 lessons • 15 minutes</p>
+            </div>
+          </div>
+          <div class="progress-bar mb-2">
+            <div class="progress-value" style="width: 25%;"></div>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">1/4 completed</span>
+            <button class="text-yellow-400 text-sm font-semibold" onclick="startLesson(2)">Continue</button>
+          </div>
+        </div>
+        
+        <div class="card p-5">
+          <div class="flex items-center mb-4">
+            <div class="bg-red-500 p-3 rounded-full mr-4">
+              <i class="fas fa-3 text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold">Common Phrases</h3>
+              <p class="text-gray-400 text-sm">6 lessons • 30 minutes</p>
+            </div>
+          </div>
+          <div class="progress-bar mb-2">
+            <div class="progress-value" style="width: 0%;"></div>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">0/6 completed</span>
+            <button class="text-yellow-400 text-sm font-semibold" onclick="startLesson(3)">Start</button>
+          </div>
+        </div>
+        
+        <div class="card p-5">
+          <div class="flex items-center mb-4">
+            <div class="bg-purple-500 p-3 rounded-full mr-4">
+              <i class="fas fa-4 text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold">Food & Dining</h3>
+              <p class="text-gray-400 text-sm">8 lessons • 40 minutes</p>
+            </div>
+          </div>
+          <div class="progress-bar mb-2">
+            <div class="progress-value" style="width: 0%;"></div>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">0/8 completed</span>
+            <button class="text-yellow-400 text-sm font-semibold" onclick="startLesson(4)">Start</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pronunciation Practice Page -->
+  <div id="pronunciation-page" class="page">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <button class="btn-sound mr-3" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-3xl font-bold inline-block">Práctica <span class="text-yellow-400">🎤</span></h1>
+          <p class="text-gray-400">Practice your Spanish pronunciation</p>
+        </div>
+        <div class="relative">
+          <svg class="w-16 h-16" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="#1f2937" stroke-width="2"/>
+            <g class="accuracy-ring">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="#facc15" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="25" class="accuracy-ring-circle"/>
+            </g>
+            <text x="18" y="21" text-anchor="middle" fill="white" font-size="8">75%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Current word card -->
+      <div class="card p-6 mb-8 text-center">
+        <div class="bg-blue-500 p-4 rounded-full inline-flex items-center justify-center mb-4">
+          <i class="fas fa-microphone text-white text-3xl"></i>
+        </div>
+        <h2 class="text-xl text-gray-400 mb-2">Say the word:</h2>
+        <p class="text-4xl font-bold text-yellow-400 mb-6" id="practiceWord">Hola</p>
+        
+        <div class="speech-feedback mx-auto" style="max-width: 300px;">
+          <div class="speech-level" id="speech-level"></div>
+        </div>
+        <p class="text-gray-400 text-sm mt-2" id="speech-status">Press the microphone button to start</p>
+        
+        <div class="mt-8">
+          <button class="btn-sound mx-auto" id="start-recording" onclick="startRecognition()">
+            <i class="fas fa-microphone"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Results section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <div class="card p-5">
+          <h3 class="font-semibold mb-4 text-center">Your Pronunciation</h3>
+          <p class="text-2xl text-center text-yellow-400" id="user-transcription">-</p>
+        </div>
+        
+        <div class="card p-5">
+          <h3 class="font-semibold mb-4 text-center">Accuracy Score</h3>
+          <p class="text-2xl text-center text-yellow-400" id="accuracy-score">-</p>
+        </div>
+      </div>
+      
+      <!-- Feedback section -->
+      <div class="card p-5 mb-8">
+        <h3 class="font-semibold mb-4 text-center">Feedback</h3>
+        <div id="feedback-content" class="text-center">
+          <p class="text-gray-400" id="feedback-text">We'll provide feedback after your pronunciation attempt</p>
+          <div id="success-animation" class="d-none mt-4">
+            <div class="success-checkmark">
+              <div class="check-icon">
+                <svg class="check-icon" width="40px" height="40px" viewBox="0 0 52 52">
+                  <circle class="check-icon-circle" cx="26" cy="26" r="25" fill="none"/>
+                  <path class="check-icon-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+              </div>
+            </div>
+            <p class="text-yellow-400 mt-2">Excellent pronunciation!</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Word bank -->
+      <h2 class="section-title text-2xl font-bold mb-6">Practice Words</h2>
+      <div class="grid grid-cols-2 gap-4 mb-10">
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Hola')">
+          <h3 class="font-semibold">Hola</h3>
+          <p class="text-gray-400 text-sm">Hello</p>
+        </div>
+        
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Adiós')">
+          <h3 class="font-semibold">Adiós</h3>
+          <p class="text-gray-400 text-sm">Goodbye</p>
+        </div>
+        
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Gracias')">
+          <h3 class="font-semibold">Gracias</h3>
+          <p class="text-gray-400 text-sm">Thank you</p>
+        </div>
+        
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Por favor')">
+          <h3 class="font-semibold">Por favor</h3>
+          <p class="text-gray-400 text-sm">Please</p>
+        </div>
+        
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Buenos días')">
+          <h3 class="font-semibold">Buenos días</h3>
+          <p class="text-gray-400 text-sm">Good morning</p>
+        </div>
+        
+        <div class="word-card card p-4 text-center" onclick="setPracticeWord('Buenas noches')">
+          <h3 class="font-semibold">Buenas noches</h3>
+          <p class="text-gray-400 text-sm">Good night</p>
+        </div>
+      </div>
+      
+      <!-- Navigation buttons -->
+      <div class="flex justify-between mb-10">
+        <button class="btn-primary" onclick="previousWord()">
+          <i class="fas fa-arrow-left mr-2"></i> Previous
+        </button>
+        <button class="btn-primary" onclick="nextWord()">
+          Next <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Page -->
+  <div id="progress-page" class="page">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <button class="btn-sound mr-3" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-3xl font-bold inline-block">Progreso <span class="text-yellow-400">📊</span></h1>
+          <p class="text-gray-400">Track your learning journey</p>
+        </div>
+        <div class="relative">
+          <svg class="w-16 h-16" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="#1f2937" stroke-width="2"/>
+            <g class="accuracy-ring">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="#facc15" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="25" class="accuracy-ring-circle"/>
+            </g>
+            <text x="18" y="21" text-anchor="middle" fill="white" font-size="8">75%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-5 mb-8">
+        <div class="stats-card card">
+          <div class="stats-number">12</div>
+          <div class="stats-label">Lessons Completed</div>
+        </div>
+        
+        <div class="stats-card card">
+          <div class="stats-number">87</div>
+          <div class="stats-label">Words Learned</div>
+        </div>
+        
+        <div class="stats-card card">
+          <div class="stats-number">15</div>
+          <div class="stats-label">Day Streak</div>
+        </div>
+        
+        <div class="stats-card card">
+          <div class="stats-number">76%</div>
+          <div class="stats-label">Average Accuracy</div>
+        </div>
+      </div>
+      
+      <div class="card p-5 mb-8">
+        <h3 class="font-semibold mb-4">Weekly Activity</h3>
+        <div class="flex items-end justify-between h-40">
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 30%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Mon</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 50%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Tue</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 70%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Wed</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 90%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Thu</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 65%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Fri</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 40%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Sat</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="bg-blue-500 w-8 rounded-t-lg" style="height: 20%;"></div>
+            <span class="text-xs text-gray-400 mt-2">Sun</span>
+          </div>
+        </div>
+      </div>
+      
+      <h2 class="section-title text-2xl font-bold mb-6">Achievements</h2>
+      <div class="grid grid-cols-2 gap-4 mb-10">
+        <div class="card p-4 text-center">
+          <div class="bg-yellow-400 text-dark p-3 rounded-full inline-flex items-center justify-center mb-3">
+            <i class="fas fa-medal"></i>
+          </div>
+          <h3 class="font-semibold">First Steps</h3>
+          <p class="text-gray-400 text-sm">Complete 5 lessons</p>
+          <div class="mt-3">
+            <span class="text-yellow-400 text-sm">Unlocked</span>
+          </div>
+        </div>
+        
+        <div class="card p-4 text-center">
+          <div class="bg-gray-600 text-gray-400 p-3 rounded-full inline-flex items-center justify-center mb-3">
+            <i class="fas fa-fire"></i>
+          </div>
+          <h3 class="font-semibold">7-Day Streak</h3>
+          <p class="text-gray-400 text-sm">Practice for 7 consecutive days</p>
+          <div class="mt-3">
+            <span class="text-gray-400 text-sm">Locked</span>
+          </div>
+        </div>
+        
+        <div class="card p-4 text-center">
+          <div class="bg-yellow-400 text-dark p-3 rounded-full inline-flex items-center justify-center mb-3">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <h3 class="font-semibold">Pronunciation Pro</h3>
+          <p class="text-gray-400 text-sm">Achieve 90% accuracy on 10 words</p>
+          <div class="mt-3">
+            <span class="text-yellow-400 text-sm">Unlocked</span>
+          </div>
+        </div>
+        
+        <div class="card p-4 text-center">
+          <div class="bg-gray-600 text-gray-400 p-3 rounded-full inline-flex items-center justify-center mb-3">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3 class="font-semibold">World Traveler</h3>
+          <p class="text-gray-400 text-sm">Learn 200 words</p>
+          <div class="mt-3">
+            <span class="text-gray-400 text-sm">Locked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Page -->
+  <div id="profile-page" class="page">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <button class="btn-sound mr-3" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h1 class="text-3xl font-bold inline-block">Perfil <span class="text-yellow-400">👤</span></h1>
+        </div>
+        <div class="relative">
+          <svg class="w-16 h-16" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="#1f2937" stroke-width="2"/>
+            <g class="accuracy-ring">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="#facc15" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="25" class="accuracy-ring-circle"/>
+            </g>
+            <text x="18" y="21" text-anchor="middle" fill="white" font-size="8">75%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="card p-5 mb-8 text-center">
+        <div class="profile-avatar">
+          <span id="profile-avatar-text">U</span>
+        </div>
+        <h2 class="text-2xl font-bold mb-1" id="profile-name">User Name</h2>
+        <p class="text-gray-400 mb-4" id="profile-email">user@example.com</p>
+        <button class="btn-primary" onclick="editProfile()">Edit Profile</button>
+      </div>
+      
+      <h2 class="section-title text-2xl font-bold mb-6">Account Settings</h2>
+      <div class="card p-5 mb-8">
+        <div class="flex justify-between items-center py-3 border-b border-gray-700">
+          <div>
+            <h3 class="font-semibold">Notification</h3>
+            <p class="text-gray-400 text-sm">Daily reminders and updates</p>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="notifications-switch" checked>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 border-b border-gray-700">
+          <div>
+            <h3 class="font-semibold">Sound Effects</h3>
+            <p class="text-gray-400 text-sm">Enable audio feedback</p>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="sounds-switch" checked>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center py-3">
+          <div>
+            <h3 class="font-semibold">Dark Mode</h3>
+            <p class="text-gray-400 text-sm">Toggle dark theme</p>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="darkmode-switch" checked>
+          </div>
+        </div>
+      </div>
+      
+      <h2 class="section-title text-2xl font-bold mb-6">Translation Tool</h2>
+      <div class="card p-5 mb-8">
+        <div class="translate-box">
+          <label class="form-label text-gray-400">Enter text to translate</label>
+          <textarea class="form-control" id="translate-input" rows="3" placeholder="Type English text here..."></textarea>
+          <button class="btn-primary w-full mt-3" onclick="translateText()">Translate to Spanish</button>
+          
+          <div class="translate-result" id="translate-result">
+            <p class="text-gray-400">Your translation will appear here...</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mb-10">
+        <button class="text-red-500" onclick="logout()">
+          <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <div class="nav-item" onclick="navigateTo('home')">
+      <div class="nav-icon">
+        <i class="fas fa-home"></i>
+      </div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('lessons')">
+      <div class="nav-icon">
+        <i class="fas fa-book-open"></i>
+      </div>
+      <div class="nav-label">Learn</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('pronunciation')">
+      <div class="nav-icon">
+        <i class="fas fa-microphone"></i>
+      </div>
+      <div class="nav-label">Speak</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('progress')">
+      <div class="nav-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="nav-label">Progress</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('profile')">
+      <div class="nav-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="nav-label">Profile</div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let currentWordIndex = 0;
+    let recognition;
+    
+    // Word list for practice
+    const practiceWords = [
+      {spanish: "Hola", english: "Hello"},
+      {spanish: "Adiós", english: "Goodbye"},
+      {spanish: "Gracias", english: "Thank you"},
+      {spanish: "Por favor", english: "Please"},
+      {spanish: "Buenos días", english: "Good morning"},
+      {spanish: "Buenas noches", english: "Good night"},
+      {spanish: "¿Cómo estás?", english: "How are you?"},
+      {spanish: "Estoy bien", english: "I'm fine"}
+    ];
+    
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      initSpeechRecognition();
+      checkAuthStatus();
+      
+      // Set up event listener for the microphone button
+      document.getElementById('start-recording').addEventListener('click', startRecognition);
+    });
+    
+    // Check if user is logged in
+    function checkAuthStatus() {
+      const userData = localStorage.getItem('spanishMasterUser');
+      if (userData) {
+        currentUser = JSON.parse(userData);
+        showPage('home');
+        updateProfileData();
+      } else {
+        showPage('auth');
+      }
+    }
+    
+    // Switch between login and signup tabs
+    function switchAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      
+      document.querySelector(`.auth-tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add('active');
+      document.getElementById(`${tab}-form`).classList.add('active');
+    }
+    
+    // Login function
+    function login() {
+      const email = document.querySelector('#login-form input[type="email"]').value;
+      const password = document.querySelector('#login-form input[type="password"]').value;
+      
+      if (!email || !password) {
+        alert('Please enter both email and password');
+        return;
+      }
+      
+      // In a real app, this would verify credentials with a server
+      // For demo purposes, we'll just create a user object
+      currentUser = {
+        name: email.split('@')[0],
+        email: email,
+        initial: email[0].toUpperCase()
+      };
+      
+      localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
+      showPage('home');
+      updateProfileData();
+      updateNavActive('home');
+    }
+    
+    // Signup function
+    function signup() {
+      const name = document.querySelector('#signup-form input[type="text"]').value;
+      const email = document.querySelector('#signup-form input[type="email"]').value;
+      const password = document.querySelector('#signup-form input[type="password"]').value;
+      const confirmPassword = document.querySelectorAll('#signup-form input[type="password"]')[1].value;
+      
+      if (!name || !email || !password || !confirmPassword) {
+        alert('Please fill all fields');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      // In a real app, this would create a new user account
+      currentUser = {
+        name: name,
+        email: email,
+        initial: name[0].toUpperCase()
+      };
+      
+      localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
+      showPage('home');
+      updateProfileData();
+      updateNavActive('home');
+    }
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem('spanishMasterUser');
+      currentUser = null;
+      showPage('auth');
+    }
+    
+    // Update profile data in UI
+    function updateProfileData() {
+      if (!currentUser) return;
+      
+      document.getElementById('user-name').textContent = currentUser.name;
+      document.getElementById('user-initial').textContent = currentUser.initial;
+      document.getElementById('profile-name').textContent = currentUser.name;
+      document.getElementById('profile-email').textContent = currentUser.email;
+      document.getElementById('profile-avatar-text').textContent = currentUser.initial;
+    }
+    
+    // Navigate to different page
+    function navigateTo(page) {
+      if (!currentUser && page !== 'auth') {
+        showPage('auth');
+        return;
+      }
+      
+      showPage(page);
+      updateNavActive(page);
+    }
+    
+    // Show specific page
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      document.getElementById(`${pageId}-page`).classList.add('active');
+    }
+    
+    // Update active navigation item
+    function updateNavActive(page) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      const navItems = document.querySelectorAll('.nav-item');
+      switch(page) {
+        case 'home': navItems[0].classList.add('active'); break;
+        case 'lessons': navItems[1].classList.add('active'); break;
+        case 'pronunciation': navItems[2].classList.add('active'); break;
+        case 'progress': navItems[3].classList.add('active'); break;
+        case 'profile': navItems[4].classList.add('active'); break;
+      }
+    }
+    
+    // Go back to previous page
+    function goBack() {
+      // Simple implementation - always goes back to home
+      navigateTo('home');
+    }
+    
+    // Start a lesson
+    function startLesson(lessonId) {
+      alert(`Starting lesson ${lessonId}`);
+      // In a real app, this would load the specific lesson
+    }
+    
+    // Edit profile
+    function editProfile() {
+      const newName = prompt('Enter your name', currentUser.name);
+      if (newName && newName.trim() !== '') {
+        currentUser.name = newName;
+        currentUser.initial = newName[0].toUpperCase();
+        localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
+        updateProfileData();
+      }
+    }
+    
+    // Initialize speech recognition
+    function initSpeechRecognition() {
+      try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          recognition = new SpeechRecognition();
+          recognition.continuous = false;
+          recognition.lang = 'es-ES';
+          
+          recognition.onstart = function() {
+            document.getElementById('start-recording').classList.add('listening');
+            document.getElementById('speech-status').textContent = "Listening...";
+          };
+          
+          recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('user-transcription').textContent = transcript;
+            
+            // Calculate accuracy
+            const target = document.getElementById('practiceWord').textContent.toLowerCase();
+            const accuracy = calculateAccuracy(transcript.toLowerCase(), target);
+            document.getElementById('accuracy-score').textContent = `${accuracy}%`;
+            
+            // Provide feedback
+            provideFeedback(transcript, target, accuracy);
+            
+            document.getElementById('speech-status').textContent = "Analysis complete";
+          };
+          
+          recognition.onerror = function(event) {
+            document.getElementById('speech-status').textContent = "Error: " + event.error;
+            document.getElementById('start-recording').classList.remove('listening');
+          };
+          
+          recognition.onend = function() {
+            document.getElementById('start-recording').classList.remove('listening');
+          };
+        } else {
+          // Browser doesn't support speech recognition
+          document.getElementById('speech-status').textContent = "Speech recognition not supported in your browser";
+        }
+      } catch(e) {
+        console.error("Speech recognition initialization error:", e);
+        document.getElementById('speech-status').textContent = "Speech recognition not available";
+      }
+    }
+    
+    // Start speech recognition
+    function startRecognition() {
+      if (recognition) {
+        recognition.start();
+        
+        // Simulate speech level visualization
+        const speechLevel = document.getElementById('speech-level');
+        let width = 0;
+        const interval = setInterval(() => {
+          width += Math.random() * 10;
+          if (width > 100) {
+            width = 100;
+            clearInterval(interval);
+            
+            // If recognition doesn't return a result within 5 seconds, simulate one
+            setTimeout(() => {
+              if (document.getElementById('user-transcription').textContent === '-') {
+                simulateRecognitionResult();
+              }
+            }, 5000);
+          }
+          speechLevel.style.width = width + '%';
+        }, 100);
+      } else {
+        // Fallback for browsers without speech recognition
+        simulateRecognitionResult();
+      }
+    }
+    
+    // Simulate recognition result for demonstration
+    function simulateRecognitionResult() {
+      document.getElementById('start-recording').classList.add('listening');
+      document.getElementById('speech-status').textContent = "Listening...";
+      
+      // Simulate speech level visualization
+      const speechLevel = document.getElementById('speech-level');
+      let width = 0;
+      const interval = setInterval(() => {
+        width += Math.random() * 10;
+        if (width > 100) {
+          width = 100;
+          clearInterval(interval);
+          
+          // Show simulated result after animation completes
+          setTimeout(() => {
+            const targetWord = document.getElementById('practiceWord').textContent;
+            document.getElementById('user-transcription').textContent = targetWord;
+            
+            // Calculate a random accuracy score for demo
+            const accuracy = 70 + Math.floor(Math.random() * 25);
+            document.getElementById('accuracy-score').textContent = `${accuracy}%`;
+            
+            // Provide feedback
+            provideFeedback(targetWord, targetWord.toLowerCase(), accuracy);
+            
+            document.getElementById('speech-status').textContent = "Analysis complete";
+            document.getElementById('start-recording').classList.remove('listening');
+          }, 500);
+        }
+        speechLevel.style.width = width + '%';
+      }, 100);
+    }
+    
+    // Calculate accuracy between user input and target
+    function calculateAccuracy(userInput, target) {
+      // Simple accuracy calculation for demo purposes
+      let matches = 0;
+      const minLength = Math.min(userInput.length, target.length);
+      
+      for (let i = 0; i < minLength; i++) {
+        if (userInput[i] === target[i]) matches++;
+      }
+      
+      // Add bonus for longer correct phrases
+      const lengthSimilarity = 1 - Math.abs(userInput.length - target.length) / Math.max(userInput.length, target.length);
+      
+      return Math.round((matches / target.length * 0.7 + lengthSimilarity * 0.3) * 100);
+    }
+    
+    // Provide feedback based on user's pronunciation
+    function provideFeedback(userInput, target, accuracy) {
+      const feedbackText = document.getElementById('feedback-text');
+      const successAnimation = document.getElementById('success-animation');
+      
+      if (accuracy >= 85) {
+        feedbackText.textContent = "Excellent! Your pronunciation is very accurate.";
+        successAnimation.classList.remove('d-none');
+      } else if (accuracy >= 70) {
+        feedbackText.textContent = "Good job! Your pronunciation is understandable but could use a little improvement.";
+        successAnimation.classList.add('d-none');
+      } else if (accuracy >= 50) {
+        feedbackText.textContent = "Not bad! Try to listen to the native pronunciation again and practice.";
+        successAnimation.classList.add('d-none');
+      } else {
+        feedbackText.textContent = "Keep practicing! Try breaking the word into syllables and pronounce them slowly.";
+        successAnimation.classList.add('d-none');
+      }
+    }
+    
+    // Set the current practice word
+    function setPracticeWord(word) {
+      document.getElementById('practiceWord').textContent = word;
+      resetFeedback();
+    }
+    
+    // Navigate to next word
+    function nextWord() {
+      currentWordIndex = (currentWordIndex + 1) % practiceWords.length;
+      document.getElementById('practiceWord').textContent = practiceWords[currentWordIndex].spanish;
+      resetFeedback();
+    }
+    
+    // Navigate to previous word
+    function previousWord() {
+      currentWordIndex = (currentWordIndex - 1 + practiceWords.length) % practiceWords.length;
+      document.getElementById('practiceWord').textContent = practiceWords[currentWordIndex].spanish;
+      resetFeedback();
+    }
+    
+    // Reset feedback UI
+    function resetFeedback() {
+      document.getElementById('user-transcription').textContent = '-';
+      document.getElementById('accuracy-score').textContent = '-';
+      document.getElementById('speech-status').textContent = 'Press the microphone button to start';
+      document.getElementById('speech-level').style.width = '0%';
+      document.getElementById('feedback-text').textContent = "We'll provide feedback after your pronunciation attempt";
+      document.getElementById('success-animation').classList.add('d-none');
+    }
+    
+    // Translate text using Google Translate API
+    function translateText() {
+      const inputText = document.getElementById('translate-input').value;
+      
+      if (!inputText.trim()) {
+        alert('Please enter some text to translate');
+        return;
+      }
+      
+      // In a real implementation, this would use the Google Translate API
+      // For demo purposes, we'll simulate a translation
+      const resultElement = document.getElementById('translate-result');
+      resultElement.innerHTML = '<p class="text-gray-400">Translating...</p>';
+      
+      setTimeout(() => {
+        // Simulated translation - in a real app, this would be the API response
+        const translations = {
+          "hello": "Hola",
+          "goodbye": "Adiós",
+          "thank you": "Gracias",
+          "please": "Por favor",
+          "good morning": "Buenos días",
+          "good night": "Buenas noches",
+          "how are you": "¿Cómo estás?",
+          "i am fine": "Estoy bien",
+          "what is your name": "¿Cómo te llamas?",
+          "my name is": "Me llamo",
+          "where is the bathroom": "¿Dónde está el baño?",
+          "i don't understand": "No entiendo",
+          "can you help me": "¿Puedes ayudarme?",
+          "i would like": "Me gustaría",
+          "how much does it cost": "¿Cuánto cuesta?"
+        };
+        
+        let translatedText = "";
+        const inputLower = inputText.toLowerCase();
+        
+        // Check if we have a direct translation
+        if (translations[inputLower]) {
+          translatedText = translations[inputLower];
+        } else {
+          // For demo purposes, just add "Spanish: " prefix to simulate translation
+          translatedText = "Spanish: " + inputText;
+        }
+        
+        resultElement.innerHTML = `<p class="text-yellow-400">${translatedText}</p>`;
+      }, 1000);
+    }
+    
+    // Load Google Translate dynamically and initialize it
+(function loadGoogleTranslate() {
+  // Avoid loading twice
+  if (document.getElementById("google-translate-script")) return;
+
+  const script = document.createElement("script");
+  script.id = "google-translate-script";
+  script.type = "text/javascript";
+  script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  document.head.appendChild(script);
+})();
+
+// Initialize Google Translate
+function googleTranslateElementInit() {
+  try {
+    new google.translate.TranslateElement(
+      {
+        pageLanguage: "en", // base language of your site
+        includedLanguages: "en,es,fr,de,it,pt,ru,ar,hi,ja,zh-CN,ko,tr", // extendable
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      },
+      "google_translate_element" // container id
+    );
+
+    console.log("✅ Google Translate initialized successfully.");
+  } catch (error) {
+    console.error("❌ Failed to initialize Google Translate:", error);
+  }
+}
+
+// Utility: reset translation back to original language
+function resetGoogleTranslate() {
+  const frame = document.querySelector("iframe.goog-te-menu-frame");
+  if (!frame) return;
+
+  const innerDoc = frame.contentDocument || frame.contentWindow.document;
+  const resetButton = innerDoc.querySelector(`.goog-te-menu2-item span[text='English']`);
+  if (resetButton) resetButton.click();
+}
+
+// Optional: programmatically set a language
+function setGoogleTranslate(lang) {
+  const frame = document.querySelector("iframe.goog-te-menu-frame");
+  if (!frame) {
+    console.warn("Translate menu not yet loaded.");
+    return;
+  }
+
+  const innerDoc = frame.contentDocument || frame.contentWindow.document;
+  const langButton = Array.from(innerDoc.querySelectorAll(".goog-te-menu2-item span"))
+    .find(span => span.textContent.trim().toLowerCase() === lang.toLowerCase());
+
+  if (langButton) {
+    langButton.click();
+    console.log(`🌐 Language switched to: ${lang}`);
+  } else {
+    console.warn(`⚠️ Language "${lang}" not found in menu.`);
+  }
+}
+  </script>
+</body>
+</html>
