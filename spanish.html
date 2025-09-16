@@ -1016,57 +1016,63 @@
     }
     
     // Login function
-    function login() {
+    async function login() {
       const email = document.querySelector('#login-form input[type="email"]').value;
       const password = document.querySelector('#login-form input[type="password"]').value;
-      
       if (!email || !password) {
         alert('Please enter both email and password');
         return;
       }
-      
-      // In a real app, this would verify credentials with a server
-      // For demo purposes, we'll just create a user object
-      currentUser = {
-        name: email.split('@')[0],
-        email: email,
-        initial: email[0].toUpperCase()
-      };
-      
-      localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
-      showPage('home');
-      updateProfileData();
-      updateNavActive('home');
+      try {
+        const res = await fetch('http://localhost:4000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        currentUser = {
+          name: data.name,
+          email: data.email,
+          initial: data.name[0].toUpperCase(),
+          token: data.token
+        };
+        localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
+        showPage('home');
+        updateProfileData();
+        updateNavActive('home');
+      } catch (err) {
+        alert('Login error: ' + err.message);
+      }
     }
     
     // Signup function
-    function signup() {
+    async function signup() {
       const name = document.querySelector('#signup-form input[type="text"]').value;
       const email = document.querySelector('#signup-form input[type="email"]').value;
       const password = document.querySelector('#signup-form input[type="password"]').value;
       const confirmPassword = document.querySelectorAll('#signup-form input[type="password"]')[1].value;
-      
       if (!name || !email || !password || !confirmPassword) {
         alert('Please fill all fields');
         return;
       }
-      
       if (password !== confirmPassword) {
         alert('Passwords do not match');
         return;
       }
-      
-      // In a real app, this would create a new user account
-      currentUser = {
-        name: name,
-        email: email,
-        initial: name[0].toUpperCase()
-      };
-      
-      localStorage.setItem('spanishMasterUser', JSON.stringify(currentUser));
-      showPage('home');
-      updateProfileData();
-      updateNavActive('home');
+      try {
+        const res = await fetch('http://localhost:4000/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+        alert('Signup successful! Please log in.');
+        switchAuthTab('login');
+      } catch (err) {
+        alert('Signup error: ' + err.message);
+      }
     }
     
     // Logout function
@@ -1323,52 +1329,26 @@
     }
     
     // Translate text using Google Translate API
-    function translateText() {
+    async function translateText() {
       const inputText = document.getElementById('translate-input').value;
-      
       if (!inputText.trim()) {
         alert('Please enter some text to translate');
         return;
       }
-      
-      // In a real implementation, this would use the Google Translate API
-      // For demo purposes, we'll simulate a translation
       const resultElement = document.getElementById('translate-result');
       resultElement.innerHTML = '<p class="text-gray-400">Translating...</p>';
-      
-      setTimeout(() => {
-        // Simulated translation - in a real app, this would be the API response
-        const translations = {
-          "hello": "Hola",
-          "goodbye": "Adiós",
-          "thank you": "Gracias",
-          "please": "Por favor",
-          "good morning": "Buenos días",
-          "good night": "Buenas noches",
-          "how are you": "¿Cómo estás?",
-          "i am fine": "Estoy bien",
-          "what is your name": "¿Cómo te llamas?",
-          "my name is": "Me llamo",
-          "where is the bathroom": "¿Dónde está el baño?",
-          "i don't understand": "No entiendo",
-          "can you help me": "¿Puedes ayudarme?",
-          "i would like": "Me gustaría",
-          "how much does it cost": "¿Cuánto cuesta?"
-        };
-        
-        let translatedText = "";
-        const inputLower = inputText.toLowerCase();
-        
-        // Check if we have a direct translation
-        if (translations[inputLower]) {
-          translatedText = translations[inputLower];
-        } else {
-          // For demo purposes, just add "Spanish: " prefix to simulate translation
-          translatedText = "Spanish: " + inputText;
-        }
-        
-        resultElement.innerHTML = `<p class="text-yellow-400">${translatedText}</p>`;
-      }, 1000);
+      try {
+        const res = await fetch('http://localhost:4000/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: inputText, target: 'es' })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Translation failed');
+        resultElement.innerHTML = `<p class="text-yellow-400">${data.translation}</p>`;
+      } catch (err) {
+        resultElement.innerHTML = `<p class="text-red-400">Error: ${err.message}</p>`;
+      }
     }
     
     // Load Google Translate dynamically and initialize it
